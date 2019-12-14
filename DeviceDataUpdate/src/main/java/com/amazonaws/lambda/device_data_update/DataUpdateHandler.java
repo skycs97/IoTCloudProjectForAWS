@@ -55,6 +55,7 @@ public class DataUpdateHandler implements RequestHandler<Document, String> {
     		this.dynamoDb.getTable(DYNAMODB_TABLE_NAME_2)
     		.putItem(new PutItemSpec().withItem(new Item().withPrimaryKey("deviceId", document.device)
                     .withLong("time", document.timestamp)
+                    .withString("dataname", "watermotor")
                     .withString("watermotor",currentTag.watermotor)
                     .withString("timestamp",timeString)));
     	}
@@ -63,6 +64,7 @@ public class DataUpdateHandler implements RequestHandler<Document, String> {
     		this.dynamoDb.getTable(DYNAMODB_TABLE_NAME_2)
     		.putItem(new PutItemSpec().withItem(new Item().withPrimaryKey("deviceId", document.device)
                     .withLong("time", document.timestamp)
+                    .withString("dataname", "sunvisor")
                     .withString("sunvisor", currentTag.sunvisor)
                     .withString("timestamp",timeString)));	
     	}
