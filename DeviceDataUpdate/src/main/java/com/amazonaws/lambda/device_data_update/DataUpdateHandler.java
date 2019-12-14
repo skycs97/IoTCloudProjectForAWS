@@ -21,7 +21,8 @@ public class DataUpdateHandler implements RequestHandler<Document, String> {
 	//다이나모 DB
     private DynamoDB dynamoDb;
     //DB Table 이름
-    private final String DYNAMODB_TABLE_NAME = "DeviceData";
+    private final String DYNAMODB_TABLE_NAME_1 = "DeviceData";
+    private final String DYNAMODB_TABLE_NAME_2 = "DeviceControlData";
     //지역
     private final String REGION = "ap-northeast-2";
 
@@ -40,14 +41,33 @@ public class DataUpdateHandler implements RequestHandler<Document, String> {
         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
         String timeString = sdf.format(new java.util.Date (document.timestamp*1000));
 
-        return this.dynamoDb.getTable(DYNAMODB_TABLE_NAME)
-                .putItem(new PutItemSpec().withItem(new Item().withPrimaryKey("deviceId", document.device)
-                        .withLong("time", document.timestamp)
-                        .withString("temperature", currentTag.temperature)
-                        .withString("hummidity", currentTag.hummidity)
-                        .withString("soilMoisture", currentTag.soilMoisture)
-                        .withString("timestamp",timeString)))
-                .toString();
+    	this.dynamoDb.getTable(DYNAMODB_TABLE_NAME_1)
+            .putItem(new PutItemSpec().withItem(new Item().withPrimaryKey("deviceId", document.device)
+                    .withLong("time", document.timestamp)
+                    .withString("temperature", currentTag.temperature)
+                    .withString("hummidity", currentTag.hummidity)
+                    .withString("soilMoisture", currentTag.soilMoisture)
+                    .withString("sunlight", currentTag.sunlight)
+                    .withString("timestamp",timeString)));
+            
+    	if (!currentTag.watermotor.equals(document.previous.state.reported.watermotor))
+    	{
+    		this.dynamoDb.getTable(DYNAMODB_TABLE_NAME_2)
+    		.putItem(new PutItemSpec().withItem(new Item().withPrimaryKey("deviceId", document.device)
+                    .withLong("time", document.timestamp)
+                    .withString("watermotor",currentTag.watermotor)
+                    .withString("timestamp",timeString)));
+    	}
+    	if(!currentTag.sunvisor.equals(document.previous.state.reported.sunvisor)) 
+    	{
+    		this.dynamoDb.getTable(DYNAMODB_TABLE_NAME_2)
+    		.putItem(new PutItemSpec().withItem(new Item().withPrimaryKey("deviceId", document.device)
+                    .withLong("time", document.timestamp)
+                    .withString("sunvisor", currentTag.sunvisor)
+                    .withString("timestamp",timeString)));	
+    	}
+    	
+    	return "";
     }
 
     private void initDynamoDbClient() {
@@ -90,7 +110,7 @@ class Thing {
             public String hummidity;
             public String soilMoisture;
             public String sunlight;
-            public String watermoter;
+            public String watermotor;
             public String sunvisor;
         }
     }
