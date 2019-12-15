@@ -13,9 +13,9 @@ import com.amazonaws.services.dynamodbv2.model.ConditionalCheckFailedException;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 
-/**
- * 데이터를 주기적으로 dynamoDB에 업데이트 하는 Lambda Function
- */
+/*
+* 데이터를 주기적으로 dynamoDB에 업데이트 하는 Lambda Function
+*/
 
 public class DataUpdateHandler implements RequestHandler<Document, String> {
 	//다이나모 DB
@@ -40,7 +40,7 @@ public class DataUpdateHandler implements RequestHandler<Document, String> {
         SimpleDateFormat sdf = new SimpleDateFormat ( "yyyy-MM-dd HH:mm:ss");
         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
         String timeString = sdf.format(new java.util.Date (document.timestamp*1000));
-
+        //센서데이터 업로드
     	this.dynamoDb.getTable(DYNAMODB_TABLE_NAME_1)
             .putItem(new PutItemSpec().withItem(new Item().withPrimaryKey("deviceId", document.device)
                     .withLong("time", document.timestamp)
@@ -49,7 +49,8 @@ public class DataUpdateHandler implements RequestHandler<Document, String> {
                     .withString("soilMoisture", currentTag.soilMoisture)
                     .withString("sunlight", currentTag.sunlight)
                     .withString("timestamp",timeString)));
-            
+    	
+        //제어데이터는 중복 확인 후 업로드    
     	if (!currentTag.watermotor.equals(document.previous.state.reported.watermotor))
     	{
     		this.dynamoDb.getTable(DYNAMODB_TABLE_NAME_2)

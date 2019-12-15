@@ -17,7 +17,9 @@ import com.amazonaws.services.dynamodbv2.document.utils.NameMap;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-
+/*
+ * 센서 데이터 조회를 위한 Lambda
+ */
 public class GetDataHandler implements RequestHandler<Event, String> {
 
     private DynamoDB dynamoDb;
@@ -32,6 +34,7 @@ public class GetDataHandler implements RequestHandler<Event, String> {
         long from=0;
         long to=0;
         try {
+        	//시간 데이터 포매팅
             SimpleDateFormat sdf = new SimpleDateFormat ( "yyyy-MM-dd HH:mm:ss");
             sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
 
@@ -40,7 +43,7 @@ public class GetDataHandler implements RequestHandler<Event, String> {
         } catch (ParseException e1) {
             e1.printStackTrace();
         }
-
+        //dynamoDB 쿼리문 deviceid와 조회 시작날짜 조회종료 날짜를 이용하여 쿼리 작성
         QuerySpec querySpec = new QuerySpec()
                 .withKeyConditionExpression("deviceId = :v_id and #t between :from and :to")
                 .withNameMap(new NameMap().with("#t", "time"))
@@ -57,7 +60,7 @@ public class GetDataHandler implements RequestHandler<Event, String> {
         return getResponse(items);
     }
     private String getResponse(ItemCollection<QueryOutcome> items) {
-
+    	//결과값을 json형태로 보내주기 위한 전처리 과정
         Iterator<Item> iter = items.iterator();
         String response = "{ \"data\": [";
         for (int i =0; iter.hasNext(); i++) {
@@ -75,7 +78,7 @@ public class GetDataHandler implements RequestHandler<Event, String> {
         this.dynamoDb = new DynamoDB(client);
     }
 }
-
+//입력 데이터의 json을 클래스 데이터로 역직렬화 하기 위한 형태
 class Event {
     public String device;
     public String from;
