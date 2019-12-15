@@ -45,7 +45,7 @@ public class DataUpdateHandler implements RequestHandler<Document, String> {
             .putItem(new PutItemSpec().withItem(new Item().withPrimaryKey("deviceId", document.device)
                     .withLong("time", document.timestamp)
                     .withString("temperature", currentTag.temperature)
-                    .withString("hummidity", currentTag.hummidity)
+                    .withString("humidity", currentTag.humidity)
                     .withString("soilMoisture", currentTag.soilMoisture)
                     .withString("sunlight", currentTag.sunlight)
                     .withString("timestamp",timeString)));
@@ -56,7 +56,7 @@ public class DataUpdateHandler implements RequestHandler<Document, String> {
     		.putItem(new PutItemSpec().withItem(new Item().withPrimaryKey("deviceId", document.device)
                     .withLong("time", document.timestamp)
                     .withString("dataname", "watermotor")
-                    .withString("watermotor",currentTag.watermotor)
+                    .withString("state",currentTag.watermotor)
                     .withString("timestamp",timeString)));
     	}
     	if(!currentTag.sunvisor.equals(document.previous.state.reported.sunvisor)) 
@@ -65,7 +65,7 @@ public class DataUpdateHandler implements RequestHandler<Document, String> {
     		.putItem(new PutItemSpec().withItem(new Item().withPrimaryKey("deviceId", document.device)
                     .withLong("time", document.timestamp)
                     .withString("dataname", "sunvisor")
-                    .withString("sunvisor", currentTag.sunvisor)
+                    .withString("state", currentTag.sunvisor)
                     .withString("timestamp",timeString)));	
     	}
     	
@@ -109,7 +109,8 @@ class Thing {
 
         public class Tag {
             public String temperature;
-            public String hummidity;
+            public String humidity;
+            public String LED;
             public String soilMoisture;
             public String sunlight;
             public String watermotor;

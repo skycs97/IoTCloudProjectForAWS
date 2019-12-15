@@ -32,9 +32,7 @@ public class DeviceContorlHandler implements RequestHandler<Event, String> {
     }
 
     private String getPayload(Tag tag) {
-        String tagstr = "";
-       
-        tagstr += String.format("\"%s\" : \"%s\"", tag.tagName, tag.tagValue);
+        String tagstr = String.format("\"%s\" : \"%s\"", tag.tagName, tag.tagValue);
 
         return String.format("{ \"state\": { \"desired\": { %s } } }", tagstr);
     }
@@ -44,6 +42,10 @@ public class DeviceContorlHandler implements RequestHandler<Event, String> {
 class Event {
     public String device;
     public Tag tag;
+    
+    public Event() {
+    	tag = new Tag();
+    }
 }
 
 class Tag {

@@ -42,9 +42,9 @@ public class GetControlDataHandler implements RequestHandler<Event, String> {
         }
 
         QuerySpec querySpec = new QuerySpec()
-                .withKeyConditionExpression("deviceId = :v_id and dataname = :d_name and #t between :from and :to")
+                .withKeyConditionExpression("deviceId = :v_id and #t between :from and :to")
                 .withNameMap(new NameMap().with("#t", "time"))
-                .withValueMap(new ValueMap().withString("d_name", input.dataname).withString(":v_id",input.device).withNumber(":from", from).withNumber(":to", to)); 
+                .withValueMap(new ValueMap().withString(":v_id",input.device).withNumber(":from", from).withNumber(":to", to)); 
 
         ItemCollection<QueryOutcome> items=null;
         try {           
@@ -80,7 +80,6 @@ public class GetControlDataHandler implements RequestHandler<Event, String> {
 
 class Event {
     public String device;
-    public String dataname;
     public String from;
     public String to;
 }
